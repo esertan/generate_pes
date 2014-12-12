@@ -5,6 +5,25 @@ module pes_init
     implicit none
 
 contains
+
+    integer function read_key(checkkey)
+
+    character(len=*), intent(in) :: checkkey
+    character(len=5) :: key
+!    integer, intent(inout) :: flag=0
+    
+    read(*,*) key
+    write(*,*) key
+    
+    if(key==checkkey) then
+        read_key=1
+    else
+        read_key=0
+    end if
+
+!    write(*,*) flag
+        
+    end function read_key    
   
     subroutine init_geo(xyz0)
     
