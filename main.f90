@@ -6,31 +6,54 @@ program main
 
     implicit none
     
-    real(rk), dimension(1:maxatoms,1:3) :: xyz0
+    integer(ik) :: maxatoms, maxmodes, step
+    real(rk) :: xmin, ssize
     real(rk) :: r01, r02, a0
-    real(rk), dimension(1:maxmodes,1:maxatoms,1:3) :: dxyz
-    real(rk), dimension(1:maxmodes,1:3) :: drtheta
-    real(rk), dimension(1:maxmodes,1:step) :: r1, r2, a
-    real(rk), dimension(1:maxmodes,1:maxatoms,1:3,1:step) :: xyz 
-    character(len=5) :: geo='GEOME', disp='DISPL', inte='INTER'   
+    real(rk), allocatable :: xyz0(:,:)
+    real(rk), allocatable :: dxyz(:,:,:)
+    real(rk), allocatable :: drtheta(:,:)
+    real(rk), allocatable :: xyz(:,:,:,:)
+    real(rk), allocatable :: r1(:,:)
+    real(rk), allocatable :: r2(:,:)
+    real(rk), allocatable :: a(:,:)
+    character(len=5) :: grid='GRIDI', mol='MOLIN', geo='GEOME', disp='DISPL', inte='INTER'   
     integer :: hflag, iflag
+
+    iflag = read_key(mol)
+
+    if(iflag==1) then
+
+        call get_molinfo(maxatoms, maxmodes)
+
+    end if
+
+    iflag = read_key(grid)
+    
+    if(iflag==1) then
+
+        call get_gridinfo(xmin, step, ssize)
+
+    end if
 
     hflag = read_key(geo)
 
     if(hflag==1) then
-        call init_geo(xyz0)
+
+        call allocate_arrays(xyz0, dxyz, xyz, drtheta, r1, r2, a, maxmodes, maxatoms, step)        
+
+        call init_geo(xyz0, maxatoms)
         
-        call init_internal_geo(xyz0, r01, r02, a0)
+        call init_internal_geo(xyz0, r01, r02, a0, maxatoms)
 
         iflag = read_key(disp)    
         
         if(iflag==1) then
         
-            call read_cartd(dxyz)
+            call read_cartd(dxyz, maxatoms, maxmodes)
         
-            call make_cartesian(xyz, xyz0, dxyz)
+            call make_cartesian(xyz, xyz0, dxyz, maxatoms, maxmodes, step, xmin, ssize)
         
-            call write_cartesian(xyz) 
+            call write_cartesian(xyz, maxatoms, maxmodes, step) 
         
         end if
 
@@ -38,15 +61,17 @@ program main
     
         if(iflag==1) then
         
-            call read_interd(drtheta)
+            call read_interd(drtheta, maxmodes)
 
-            call make_internal(r01, r02, a0, r1, r2, a, drtheta)
+            call make_internal(r01, r02, a0, r1, r2, a, drtheta, maxatoms, maxmodes, step, xmin, ssize)
 
-            call write_internal(r1,r2,a)
+            call write_internal(r1,r2,a, maxatoms, maxmodes, step)
         
         end if
 
-        call write_grid
+        call write_grid(step, ssize, xmin)
+
+        call deallocate_arrays(xyz0,dxyz, xyz, drtheta, r1, r2, a,maxmodes, maxatoms, step)
 
     end if
 

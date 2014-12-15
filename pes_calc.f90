@@ -6,18 +6,20 @@ module pes_calc
 
 contains
   
-    subroutine make_internal(r01, r02, a0, r1, r2, a, drtheta)
+    subroutine make_internal(r01, r02, a0, r1, r2, a, drtheta, maxatoms, maxmodes, step, xmin, ssize)
 
     ! Make the displacement in internal coordinates.
+    
+    integer(ik) :: maxatoms, maxmodes, step
     real(rk), intent(in) :: r01, r02, a0
     real(rk), dimension(1:maxmodes, 1:3), intent(in) :: drtheta
     real(rk), dimension(1:maxmodes, 1:step), intent(inout) :: r1, r2, a
     integer :: l, j
-    real(rk) :: s
+    real(rk) :: s, ssize, xmin
 
     write(*,*) 'Displaced internal coordinates'
     do l=1,step
-        s=-1.05d0+l*ssize
+        s=xmin+l*ssize
         do j=1,maxmodes
             r1(j,l) = r01+s*drtheta(j,1)
             r2(j,l) = r02+s*drtheta(j,2)
@@ -29,18 +31,19 @@ contains
 
     end subroutine make_internal
 
-    subroutine make_cartesian(xyz, xyz0, dxyz)
+    subroutine make_cartesian(xyz, xyz0, dxyz, maxatoms, maxmodes, step, xmin, ssize)
 
     ! Make displacement in cartesian coordinates
 
+    integer(ik) :: maxatoms, maxmodes, step
     real(rk), dimension(1:maxatoms, 1:3), intent(in) :: xyz0
     real(rk), dimension(1:maxmodes, 1:maxatoms, 1:3) :: dxyz
     real(rk), dimension(1:maxmodes, 1:maxatoms, 1:3, 1:step) :: xyz
     integer :: l, j, i, k
-    real(rk) :: s
+    real(rk) :: s, ssize, xmin
     
     do l = 1, step
-        s=-1.05d0+l*ssize
+        s=xmin+l*ssize
         do j=1,maxmodes
             do i=1, maxatoms
                 do k=1,3
@@ -52,26 +55,28 @@ contains
 
     end subroutine make_cartesian
     
-    subroutine write_grid()
+    subroutine write_grid(step, ssize, xmin)
 
     ! Writes the distortion grid to file in atomic units
-
+    
+    integer(ik) :: step
     integer :: l
-    real(rk) :: s
+    real(rk) :: s, ssize, xmin
     
     open(unit=15,form='formatted',status='unknown',file='Q')
 
     do l=1,step
-        s=-1.05d0+l*ssize
+        s=xmin+l*ssize
         write(15,'(i3XXXF6.3)') l,s
     end do
     close(15)
     
     end subroutine write_grid
-    subroutine write_cartesian(xyz)
+    subroutine write_cartesian(xyz, maxatoms, maxmodes, step)
     
     !Writes displaced cartesian coordinates to specified output file. Maximum number of output geometries are 999.
 
+    integer(ik) :: step, maxatoms, maxmodes
     real(rk), dimension(1:maxmodes, 1:maxatoms, 1:3, 1:step), intent(in) :: xyz
     character(len=10) :: cfile, dfile, efile
     integer :: i, imol, l
@@ -171,10 +176,11 @@ contains
 
     end subroutine write_cartesian
 
-    subroutine write_internal(r1, r2, a)
+    subroutine write_internal(r1, r2, a, maxatoms, maxmodes, step)
 
     ! Writes displaced internal coordinates to file. Output in cartesian format.
     
+    integer(ik) :: maxatoms, maxmodes, step
     real(rk), dimension(1:maxmodes, 1:step), intent(in) :: r1, r2, a
     character(len=13) :: cfile, dfile, efile
     integer :: i, imol, l
