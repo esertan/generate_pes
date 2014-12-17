@@ -91,6 +91,7 @@ contains
     deallocate(r2, STAT=istat)
     deallocate(a, STAT=istat)    
 
+    ! TODO: Check istat !!
 
     end subroutine deallocate_arrays    
   
