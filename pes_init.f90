@@ -45,7 +45,7 @@ contains
     read(*,*) xmin, step, ssize
 
     end subroutine get_gridinfo
-    subroutine allocate_arrays(xyz0, dxyz, xyz, drtheta, r1, r2, a, maxmodes, maxatoms, step)
+    subroutine allocate_arrays(xyz0, dxyz, xyz, drtheta, r1, r2, a, maxmodes, maxatoms, step, aname)
 
     ! Subroutine allocates the arrays for atom positions and dispacements.
 
@@ -58,6 +58,7 @@ contains
     real(rk), allocatable :: r1(:,:)
     real(rk), allocatable :: r2(:,:)
     real(rk), allocatable :: a(:,:)
+    character(len=3), allocatable :: aname(:)
 
     allocate(xyz0(1:maxatoms,1:3), STAT=istat)
     allocate(dxyz(1:maxmodes,1:maxatoms,1:3), STAT=istat)
@@ -66,10 +67,11 @@ contains
     allocate(r1(1:maxmodes,1:step), STAT=istat)
     allocate(r2(1:maxmodes,1:step), STAT=istat)
     allocate(a(1:maxmodes,1:step), STAT=istat)
+    allocate(aname(1:maxatoms), STAT=istat)
 
     end subroutine allocate_arrays
 
-    subroutine deallocate_arrays(xyz0, dxyz, xyz, drtheta, r1, r2, a, maxmodes, maxatoms, step)
+    subroutine deallocate_arrays(xyz0, dxyz, xyz, drtheta, r1, r2, a, maxmodes, maxatoms, step, aname)
 
     ! Subroutine deallocates arrays that were allocated in the allocate_arrays subroutine.
 
@@ -82,6 +84,7 @@ contains
     real(rk), allocatable :: r1(:,:)
     real(rk), allocatable :: r2(:,:)
     real(rk), allocatable :: a(:,:)
+    character(len=3), allocatable :: aname(:)
 
     deallocate(xyz0, STAT=istat)
     deallocate(dxyz, STAT=istat)
@@ -90,19 +93,23 @@ contains
     deallocate(r1, STAT=istat)
     deallocate(r2, STAT=istat)
     deallocate(a, STAT=istat)    
-
+    deallocate(aname, STAT=istat)
     ! TODO: Check istat !!
 
     end subroutine deallocate_arrays    
   
-    subroutine init_geo(xyz0, maxatoms)
+    subroutine init_geo(xyz0, maxatoms, aname)
     
-    ! Subroutine reads in initial geometry from stdin in cartesian coordinates (Angstrom).
+    ! Subroutine reads in atom names and initial geometry from stdin in cartesian coordinates (Angstrom).
     integer(ik) :: maxatoms
-    real(rk), dimension(1:maxatoms, 1:3), intent(inout) :: xyz0
+    real(rk), allocatable, intent(inout) :: xyz0(:,:)
     integer :: i,j,k
+    character(len=3), allocatable :: aname(:)
 
 !    write(*,*) 'Reading input geometry (a.u)'
+
+    read(*,*) (aname(i), i=1,maxatoms)
+!    write(*,*) (aname(i), i=1,maxatoms)
     do i=1, maxatoms
         read(*,*) (xyz0(i,k), k=1,3)
         xyz0(i,:) = xyz0(i,:)/autoaa
@@ -117,7 +124,7 @@ contains
     ! Converts the initial geometry to internal coordinates    
 
     integer(ik) :: maxatoms
-    real(rk), dimension(1:maxatoms, 1:3), intent(in) :: xyz0
+    real(rk), allocatable, intent(in) :: xyz0(:,:)
     real(rk), intent(inout) :: r01, r02, a0
 
     r01 = dsqrt(sum((xyz0(1,:)-xyz0(2,:))**2))
@@ -132,7 +139,7 @@ contains
 
     ! Subroutine reads in displacement vectors from stdin in atomic units.
     integer(ik) :: maxatoms, maxmodes
-    real(rk), dimension(1:maxmodes, 1:maxatoms, 1:3), intent(inout) :: dxyz
+    real(rk), allocatable, intent(inout) :: dxyz(:,:,:)
     integer :: i,j,k
 
 !    write(*,*) 'Reading cartesian displacement'
@@ -155,7 +162,7 @@ contains
     ! Subroutine reads in displacement in internal coordinates (atomic units).
 
     integer(ik) :: maxmodes
-    real(rk), dimension(1:maxmodes, 1:3), intent(inout) :: drtheta
+    real(rk), allocatable, intent(inout) :: drtheta(:,:)
     integer :: i, j, k
 
 !    write(*,*) 'Reading displacement internal coordinates'
