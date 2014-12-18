@@ -37,7 +37,7 @@ contains
 
     subroutine get_gridinfo(xmin, step, ssize)
 
-    ! Reads parameters xmin, #steps, step size for the distortion gird from input.
+    ! Reads parameters xmin, #steps, step size for the distortion grid from input.
 
     integer(ik), intent(inout) :: step
     real(rk), intent(inout) :: ssize, xmin
@@ -71,12 +71,34 @@ contains
 
     end subroutine allocate_arrays
 
-    subroutine deallocate_arrays(xyz0, dxyz, xyz, drtheta, r1, r2, a, maxmodes, maxatoms, step, aname)
+    subroutine allocate_2d_arrays(maxatoms, step2d, xyz2d, r2d1, r2d2, a2d)
+
+    ! Subroutine allocates the arrays for atom positions and dispacements.
+
+    integer :: istat
+    integer(ik) :: maxatoms, step2d
+    real(rk), allocatable :: xyz2d(:,:,:,:)
+    real(rk), allocatable :: r2d1(:,:)
+    real(rk), allocatable :: r2d2(:,:)
+    real(rk), allocatable :: a2d(:,:)
+
+    allocate(xyz2d(1:maxatoms,1:3,1:step2d,1:step2d), STAT=istat)
+    if(istat /= 0)write(*,*)"allocation error"
+    allocate(r2d1(1:step2d,1:step2d), STAT=istat)
+    if(istat /= 0)write(*,*)"allocation error"
+
+    allocate(r2d2(1:step2d,1:step2d), STAT=istat)
+    if(istat /= 0)write(*,*)"allocation error"
+
+    allocate(a2d(1:step2d,1:step2d), STAT=istat)
+
+    end subroutine allocate_2d_arrays
+
+    subroutine deallocate_arrays(xyz0, dxyz, xyz, drtheta, r1, r2, a, aname)
 
     ! Subroutine deallocates arrays that were allocated in the allocate_arrays subroutine.
 
     integer :: istat
-    integer(ik) :: maxmodes, maxatoms, step
     real(rk), allocatable :: xyz0(:,:)
     real(rk), allocatable :: dxyz(:,:,:)
     real(rk), allocatable :: drtheta(:,:)
@@ -92,18 +114,40 @@ contains
     deallocate(xyz, STAT=istat)
     deallocate(r1, STAT=istat)
     deallocate(r2, STAT=istat)
-    deallocate(a, STAT=istat)    
+    deallocate(a, STAT=istat)      
     deallocate(aname, STAT=istat)
     ! TODO: Check istat !!
 
     end subroutine deallocate_arrays    
-  
+
+    subroutine deallocate_2d_arrays(xyz2d, r2d1, r2d2, a2d)
+
+    ! Subroutine deallocates arrays that were allocated in the allocate_arrays subroutine.
+
+    integer :: istat
+    real(rk), allocatable :: xyz2d(:,:,:,:)
+    real(rk), allocatable :: r2d1(:,:)
+    real(rk), allocatable :: r2d2(:,:)
+    real(rk), allocatable :: a2d(:,:)
+
+    deallocate(xyz2d, STAT=istat)
+    if(istat /= 0)write(*,*)"deallocation error"
+    deallocate(r2d1, STAT=istat)
+    if(istat /= 0)write(*,*)"deallocation error"
+    deallocate(r2d2, STAT=istat)
+    if(istat /= 0)write(*,*)"deallocation error"
+    deallocate(a2d, STAT=istat)   
+    if(istat /= 0)write(*,*)"deallocation error"
+    
+    ! TODO: Check istat !!
+
+    end subroutine deallocate_2d_arrays  
     subroutine init_geo(xyz0, maxatoms, aname)
     
     ! Subroutine reads in atom names and initial geometry from stdin in cartesian coordinates (Angstrom).
     integer(ik) :: maxatoms
     real(rk), allocatable, intent(inout) :: xyz0(:,:)
-    integer :: i,j,k
+    integer :: i,k
     character(len=3), allocatable :: aname(:)
 
 !    write(*,*) 'Reading input geometry (a.u)'
@@ -119,11 +163,10 @@ contains
     
     end subroutine init_geo
 
-    subroutine init_internal_geo(xyz0, r01, r02, a0, maxatoms)
+    subroutine init_internal_geo(xyz0, r01, r02, a0)
 
     ! Converts the initial geometry to internal coordinates    
 
-    integer(ik) :: maxatoms
     real(rk), allocatable, intent(in) :: xyz0(:,:)
     real(rk), intent(inout) :: r01, r02, a0
 
@@ -163,7 +206,7 @@ contains
 
     integer(ik) :: maxmodes
     real(rk), allocatable, intent(inout) :: drtheta(:,:)
-    integer :: i, j, k
+    integer :: j, k
 
 !    write(*,*) 'Reading displacement internal coordinates'
     do j=1,maxmodes
@@ -178,6 +221,20 @@ contains
     end do
     
     end subroutine read_interd
+
+    subroutine read_2d(mode1, mode2, xmin2d, step2d, ssize2d)
+
+    ! Reads which modes that will be combined to make (2d) displacement
+
+    integer(ik), intent(inout) :: mode1, mode2, step2d
+    real(rk), intent(inout) :: xmin2d, ssize2d
+
+    read(*,*) mode1, mode2
+    write(*,*) mode1, mode2
+    read(*,*) xmin2d, step2d, ssize2d
+    write(*,*) xmin2d, step2d, ssize2d
+
+    end subroutine read_2d
 
 !    subroutine angle_bending(ar1, ar2, amin, angstep, angsize)
 

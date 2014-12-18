@@ -6,11 +6,11 @@ module pes_calc
 
 contains
   
-    subroutine make_internal(r01, r02, a0, r1, r2, a, drtheta, maxatoms, maxmodes, step, xmin, ssize)
+    subroutine make_internal(r01, r02, a0, r1, r2, a, drtheta, maxmodes, step, xmin, ssize)
 
     ! Make the displacement in internal coordinates.
     
-    integer(ik) :: maxatoms, maxmodes, step
+    integer(ik) :: maxmodes, step
     real(rk), intent(in) :: r01, r02, a0
     real(rk), allocatable, intent(in) :: drtheta(:,:)
     real(rk), allocatable, intent(inout) :: r1(:,:), r2(:,:), a(:,:)
@@ -54,6 +54,66 @@ contains
     end do
 
     end subroutine make_cartesian
+
+    subroutine make_2d_internal(r01, r02, a0, r2d1, r2d2, a2d, drtheta, step2d, xmin2d, ssize2d, mode1, mode2)
+
+    ! Make the displacement in internal coordinates.
+    
+    integer(ik), intent(in) :: step2d, mode1, mode2
+    real(rk), intent(in) :: r01, r02, a0, ssize2d, xmin2d
+    real(rk), allocatable, intent(in) :: drtheta(:,:)
+    real(rk), allocatable, intent(inout) :: r2d1(:,:), r2d2(:,:), a2d(:,:)
+    integer :: l, m!, counter=0
+    real(rk) :: s, t
+
+    write(*,*) 'Displaced internal coordinates'
+    do m=1,step2d
+        t=xmin2d+m*ssize2d
+        do l=1,step2d
+            s=xmin2d+l*ssize2d
+!            counter=counter+1
+            r2d1(l,m) = r01+s*drtheta(mode1,1)+t*drtheta(mode2,1)
+            r2d2(l,m) = r02+s*drtheta(mode1,2)+t*drtheta(mode2,2)
+            a2d(l,m) = a0+s*drtheta(mode1,3)+t*drtheta(mode2,3)
+!            write(*,*) drtheta(j,1), drtheta(j,2), drtheta(j,3)
+!            write(*,*) s, r1(j,l)*autoaa, r2(j,l)*autoaa, a(j,l)*180.d0/pi
+        end do
+    end do
+!    write(*,*) counter
+    end subroutine make_2d_internal
+
+    subroutine make_2d_cartesian(xyz2d, xyz0, dxyz, maxatoms, step2d, xmin2d, ssize2d, mode1, mode2)
+
+   ! Make displacement in cartesian coordinates using two the displacement vectors of normal modes (~2d)
+
+    integer(ik), intent(in) :: maxatoms, step2d, mode1, mode2
+    real(rk), allocatable, intent(in) :: xyz0(:,:)
+    real(rk), allocatable, intent(in) :: dxyz(:,:,:)
+    real(rk), allocatable, intent(inout) :: xyz2d(:,:,:,:)
+    integer :: l, i, k, m
+    real(rk) :: s,t, ssize2d, xmin2d
+    
+    do m=1,step2d
+        t=xmin2d+m*ssize2d
+        write(*,*) "t=", t
+        do l = 1, step2d
+            s=xmin2d+l*ssize2d
+            write(*,*) "s=", s
+            do i=1, maxatoms
+                do k=1,3
+                    xyz2d(i,k,l,m)=xyz0(i,k)+t*dxyz(mode1,i,k)+s*dxyz(mode2,i,k)
+                end do
+            end do
+            write(*,*) "m=", m
+            write(*,*) "l=", l
+
+        end do
+    end do
+
+    end subroutine make_2d_cartesian
+
+
+
 
 !    subroutine make_angle_bending(amin, angstep, angsize, acoord)
 
