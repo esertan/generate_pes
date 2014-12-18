@@ -3,11 +3,12 @@ program main
     use mydefs
     use pes_init
     use pes_calc
+    use pes_write
 
     implicit none
     
     integer(ik) :: maxatoms, maxmodes, step
-    real(rk) :: xmin, ssize
+    real(rk) :: xmin, ssize!, ar1, ar2, br1, amin, angstep, angsize, angle, rmin, rstep, rsize
     real(rk) :: r01, r02, a0
     real(rk), allocatable :: xyz0(:,:)
     real(rk), allocatable :: dxyz(:,:,:)
@@ -17,7 +18,7 @@ program main
     real(rk), allocatable :: r2(:,:)
     real(rk), allocatable :: a(:,:)
     character(len=3), allocatable :: aname(:)
-    character(len=5) :: grid='GRIDI', mol='MOLIN', geo='GEOME', disp='DISPL', inte='INTER'   
+    character(len=5) :: grid='GRIDI', mol='MOLIN', geo='GEOME', disp='DISPL', inte='INTER'!, ang='ANGLE', bond='BONDS' 
     integer :: hflag, iflag
 
     iflag = read_key(mol)
@@ -75,5 +76,21 @@ program main
         call deallocate_arrays(xyz0,dxyz, xyz, drtheta, r1, r2, a, maxmodes, maxatoms, step, aname)
 
     end if
+
+!    iflag = read_key(ang)
+
+!    if(iflag==1) then
+!        call angle_bending(ar1, ar2, amin, angstep, angsize)
+!        call make_angle_bending(amin, angstep, angsize, acoord)
+!        call write_angle_bending(acoord)
+!    end if
+
+!    iflag = read_key(bond)
+!
+!    if(iflag==1) then
+!        call bond_stretching(br1, angle, rmin, rstep, rsize)
+!        call make_bond_stretching(rmin, rstep, rsize, rcoord)
+!        call write_bond_stretching(rcoord)
+!    end if
 
 end program main

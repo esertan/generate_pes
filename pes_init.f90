@@ -179,4 +179,25 @@ contains
     
     end subroutine read_interd
 
+!    subroutine angle_bending(ar1, ar2, amin, angstep, angsize)
+
+    ! Subroutine reads in two distances and angle min and angle max for angle bending with fixed bond distances.
+
+!    real(rk), intent(inout) :: ar1, ar2, amin, angstep, angsize
+
+!    read(*,*) ar1, ar2, amin, angstep, angsize
+!    write(*,*) ar1, ar2, amin, angstep, angsize
+
+!    end subroutine angle_bending
+
+!    subroutine bond_stretching(br1, angle, rmin, rstep, rsize)
+
+    ! Subroutine reads in one distance and one angle and a min distance and max distance for bond stretching with fixed angle and fixed other bond.
+
+!    real(rk), intent(inout) :: br1, angle, rmin, rstep, rsize
+
+!    read(*,*) br1, angle, rmin, rstep, rsize
+!    write(*,*) br1, angle, rmin, rstep, rsize
+
+!    end subroutine bond_stretching
 end module pes_init
