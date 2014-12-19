@@ -1,7 +1,7 @@
 MOLINFO
 3 3     #atoms #modes
 GRIDINFO    
--1.050000 10 0.050000   xmin #steps stepsize
+-1.050000 21 0.050000   xmin #steps stepsize
 GEOMETRY
 H2 O1 H3        principal atoms 
     0.000000        0.756650       -0.469993     h x y z
@@ -23,5 +23,5 @@ INTERNAL
 0.731465      -0.731465       -0.000000       asym
 2DIMENSIONAL
 2 3
--1.05 5 0.05
+-1.05 22 0.05
 END OF INPUT

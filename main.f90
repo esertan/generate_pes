@@ -58,9 +58,9 @@ program main
         
             call read_cartd(dxyz, maxatoms, maxmodes)
         
-            call make_cartesian(xyz, xyz0, dxyz, maxatoms, maxmodes, step, xmin, ssize)
+!            call make_cartesian(xyz, xyz0, dxyz, maxatoms, maxmodes, step, xmin, ssize)
         
-            call write_cartesian(xyz, maxatoms, step, aname) 
+!            call write_cartesian(xyz, maxatoms, step, aname) 
         
         end if
 
@@ -70,13 +70,13 @@ program main
         
             call read_interd(drtheta, maxmodes)
 
-            call make_internal(r01, r02, a0, r1, r2, a, drtheta, maxmodes, step, xmin, ssize)
+ !           call make_internal(r01, r02, a0, r1, r2, a, drtheta, maxmodes, step, xmin, ssize)
 
-            call write_internal(r1,r2,a, maxatoms, step,aname)
+!            call write_internal(r1,r2,a, maxatoms, step,aname)
         
         end if
 
-        call write_grid(step, ssize, xmin)
+!        call write_grid(step, ssize, xmin)
 
         iflag = read_key(dime)
         
@@ -85,7 +85,7 @@ program main
             call read_2d(mode1, mode2, xmin2d, step2d,ssize2d)
             
             call allocate_2d_arrays(maxatoms, step2d, xyz2d, r2d1, r2d2, a2d)
-
+            !call allocate_2d_arrays(step2d, r2d1, r2d2, a2d)
             call make_2d_cartesian(xyz2d, xyz0, dxyz, maxatoms, step2d, xmin2d, ssize2d, mode1, mode2)
 
             call write_2d_cartesian(xyz2d, maxatoms, step2d, aname)
@@ -94,8 +94,10 @@ program main
 
             call write_2d_internal(r2d1, r2d2, a2d, maxatoms, step2d, aname)
 
+            call write_2d_grid(step2d,ssize2d,xmin2d)
+            !call deallocate_2d_arrays(r2d1, r2d2, a2d)
             call deallocate_2d_arrays(xyz2d, r2d1, r2d2, a2d)
-
+            
         end if
 
         call deallocate_arrays(xyz0, dxyz, xyz, drtheta, r1, r2, a, aname)

@@ -24,6 +24,36 @@ contains
     
     end subroutine write_grid
 
+    subroutine write_2d_grid(step2d, ssize2d, xmin2d)
+
+    integer(ik) :: step2d
+    integer :: l,m
+    real(rk) :: s, t, ssize2d, xmin2d
+    character(len=4) :: qfile
+
+    do m=1, step2d
+        t=xmin2d+m*ssize2d
+        
+        select case(m)
+            case(1:9)
+                write(qfile, '(a,i1)') 'Q00', m
+            case(10:99)
+                write(qfile, '(a,i2)') 'Q0', m
+            case(100:999)
+                write(qfile, '(a,i3)') 'Q', m
+ 
+        end select
+        open(unit=iw1,form='formatted', status='unknown',file=qfile)
+        
+        do l=1,step2d
+            s=xmin2d+l*ssize2d
+            write(iw1,'(i3,3x,f6.3,3x,i3,3x,f6.3)') m, t, l, s
+        end do
+        close(iw1)
+    end do
+            
+    end subroutine write_2d_grid
+
     subroutine write_cartesian(xyz, maxatoms, step, aname)
     
     !Writes displaced cartesian coordinates to specified output file. Maximum number of output geometries are 999.
@@ -162,23 +192,23 @@ contains
 
         ! Write coordinates to file converted to cartesian format.
 
-        write(iw2,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(1,imol)*dsin(0.5d0*a(1,imol))*autoaa, &
-                -r1(1,imol)*dcos(0.5d0*a(1,imol))*autoaa
-        write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(2,imol)*dsin(0.5d0*a(2,imol))*autoaa, &
-                -r1(2,imol)*dcos(0.5d0*a(2,imol))*autoaa
-        write(iw4,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(3,imol)*dsin(0.5d0*a(3,imol))*autoaa, &
-                -r1(3,imol)*dcos(0.5d0*a(3,imol))*autoaa
+        write(iw2,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(1,imol)*sin(0.5d0*a(1,imol))*autoaa, &
+                -r1(1,imol)*cos(0.5d0*a(1,imol))*autoaa
+        write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(2,imol)*sin(0.5d0*a(2,imol))*autoaa, &
+                -r1(2,imol)*cos(0.5d0*a(2,imol))*autoaa
+        write(iw4,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(3,imol)*sin(0.5d0*a(3,imol))*autoaa, &
+                -r1(3,imol)*cos(0.5d0*a(3,imol))*autoaa
 
         write(iw2,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(2), 0d0, 0d0, 0d0
         write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(2), 0d0, 0d0, 0d0
         write(iw4,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(2), 0d0, 0d0, 0d0
 
-        write(iw2,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(1,imol)*dsin(0.5d0*a(1,imol))*autoaa,&
-                    -r2(1,imol)*dcos(0.5d0*a(1,imol))*autoaa
-        write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(2,imol)*dsin(0.5d0*a(2,imol))*autoaa,&
-                    -r2(2,imol)*dcos(0.5d0*a(2,imol))*autoaa
-        write(iw4,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(3,imol)*dsin(0.5d0*a(3,imol))*autoaa,&
-                    -r2(3,imol)*dcos(0.5d0*a(3,imol))*autoaa
+        write(iw2,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(1,imol)*sin(0.5d0*a(1,imol))*autoaa,&
+                    -r2(1,imol)*cos(0.5d0*a(1,imol))*autoaa
+        write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(2,imol)*sin(0.5d0*a(2,imol))*autoaa,&
+                    -r2(2,imol)*cos(0.5d0*a(2,imol))*autoaa
+        write(iw4,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(3,imol)*sin(0.5d0*a(3,imol))*autoaa,&
+                    -r2(3,imol)*cos(0.5d0*a(3,imol))*autoaa
 
         write(iw2,'(a1,3x,f9.6,2x,f9.6,2x,f9.6)') "X", 0.d0, 0.d0, 0.00005d0
         write(iw3,'(a1,3x,f9.6,2x,f9.6,2x,f9.6)') "X", 0.d0, 0.d0, 0.00005d0
@@ -196,27 +226,27 @@ contains
 
         write(iw2,'(i1)') maxatoms         
         write(iw2,'(i1)')
-        write(iw2,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(1,imol)*dsin(0.5d0*a(1,imol))*autoaa, &
-                -r1(1,imol)*dcos(0.5d0*a(1,imol))*autoaa
+        write(iw2,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(1,imol)*sin(0.5d0*a(1,imol))*autoaa, &
+                -r1(1,imol)*cos(0.5d0*a(1,imol))*autoaa
         write(iw2,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(2), 0.d0, 0.d0, 0.d0
-        write(iw2,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(1,imol)*dsin(0.5d0*a(1,imol))*autoaa,&
-                    -r2(1,imol)*dcos(0.5d0*a(1,imol))*autoaa
+        write(iw2,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(1,imol)*sin(0.5d0*a(1,imol))*autoaa,&
+                    -r2(1,imol)*cos(0.5d0*a(1,imol))*autoaa
 
         write(iw3,'(i1)') maxatoms         
         write(iw3,'(i1)')
-        write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(2,imol)*dsin(0.5d0*a(2,imol))*autoaa, &
-                -r1(2,imol)*dcos(0.5d0*a(2,imol))*autoaa
+        write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(2,imol)*sin(0.5d0*a(2,imol))*autoaa, &
+                -r1(2,imol)*cos(0.5d0*a(2,imol))*autoaa
         write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(2), 0.d0, 0.d0, 0.d0
-        write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(2,imol)*dsin(0.5d0*a(2,imol))*autoaa,&
-                    -r2(2,imol)*dcos(0.5d0*a(2,imol))*autoaa
+        write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(2,imol)*sin(0.5d0*a(2,imol))*autoaa,&
+                    -r2(2,imol)*cos(0.5d0*a(2,imol))*autoaa
 
         write(iw4,'(i1)') maxatoms         
         write(iw4,'(i1)')
-        write(iw4,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(3,imol)*dsin(0.5d0*a(3,imol))*autoaa, &
-                -r1(3,imol)*dcos(0.5d0*a(3,imol))*autoaa
+        write(iw4,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r1(3,imol)*sin(0.5d0*a(3,imol))*autoaa, &
+                -r1(3,imol)*cos(0.5d0*a(3,imol))*autoaa
         write(iw4,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(2), 0.d0, 0.d0, 0.d0
-        write(iw4,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(3,imol)*dsin(0.5d0*a(3,imol))*autoaa,&
-                    -r2(3,imol)*dcos(0.5d0*a(3,imol))*autoaa
+        write(iw4,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2(3,imol)*sin(0.5d0*a(3,imol))*autoaa,&
+                    -r2(3,imol)*cos(0.5d0*a(3,imol))*autoaa
 
         close(iw2)
         close(iw3)
@@ -235,10 +265,13 @@ contains
     character(len=11) :: dfile
     character(len=12) :: efile
     integer :: imol, jmol, fc=0
+    real(rk) :: q1, q2, q3, q4, q5, q6    
 
-    do imol=1,step2d
-        do jmol=1,step2d
+    do jmol=1,step2d
+        write(*,*) "jmol=", jmol
+        do imol=1,step2d
             fc=fc+1
+            write(*,*) "imol=", imol, "fc=", fc
             select case(fc)
                 case(1:9)
                     write(dfile, '(a,i1)') 'H2O2DINT00', fc
@@ -248,20 +281,34 @@ contains
                     write(dfile, '(a,i3)') 'H2O2DINT', fc
 
             end select
-        !write(*,*) 'Generating files', cfile, dfile, efile
+            write(*,*) 'Generating files', dfile
 
             open(unit=iw3,form='formatted',status='unknown',file=dfile)
 
         ! Write coordinates to file converted to cartesian format.
 
-            write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r2d1(imol,jmol)*dsin(0.5d0*a2d(imol,jmol))*autoaa, &
-                   -r2d1(imol,jmol)*dcos(0.5d0*a2d(imol,jmol))*autoaa
-!
+            write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r2d1(imol,jmol)*sin(0.5_rk*a2d(imol,jmol))*autoaa, &
+                   -r2d1(imol,jmol)*cos(0.5_rk*a2d(imol,jmol))*autoaa
+            
+            q1=r2d1(imol,jmol)
+            q3=sin(0.5_rk*a2d(imol,jmol))*autoaa
+            q5=q1*q3
+            q2=-r2d1(imol,jmol)
+            q4=cos(0.5_rk*a2d(imol,jmol))*autoaa
+
+            q6=q2*q4
+            write(*,*) 0.d0, q5, q6
+
             write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(2), 0d0, 0d0, 0d0
+            
 
-            write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2d2(imol,jmol)*dsin(0.5d0*a2d(imol,jmol))*autoaa,&
-                        -r2d2(imol,jmol)*dcos(0.5d0*a2d(imol,jmol))*autoaa
-
+            write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2d2(imol,jmol)*sin(0.5_rk*a2d(imol,jmol))*autoaa,&
+                        -r2d2(imol,jmol)*cos(0.5_rk*a2d(imol,jmol))*autoaa
+            
+            q1=-r2d2(imol,jmol)*sin(0.5_rk*a2d(imol,jmol))*autoaa
+            q2=-r2d2(imol,jmol)*cos(0.5_rk*a2d(imol,jmol))*autoaa
+            
+            
             write(iw3,'(a1,3x,f9.6,2x,f9.6,2x,f9.6)') "X", 0.d0, 0.d0, 0.00005d0
 
             close(iw3)
@@ -275,18 +322,16 @@ contains
                 case(100:999)
                     write(efile, '(a,i3)') 'TRAJ2DINT', imol
 
-            end select
-
+            end select            
 
             open(unit=iw3,form='formatted',status='unknown',file=efile,position='append')
-
             write(iw3,'(i1)') maxatoms         
             write(iw3,'(i1)')
-            write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r2d1(imol,jmol)*dsin(0.5d0*a2d(imol,jmol))*autoaa, &
-                   -r2d1(2,imol)*dcos(0.5d0*a2d(imol,jmol))*autoaa
+            write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r2d1(imol,jmol)*sin(0.5d0*a2d(imol,jmol))*autoaa, &
+                   -r2d1(2,imol)*cos(0.5d0*a2d(imol,jmol))*autoaa
             write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(2), 0.d0, 0.d0, 0.d0
-            write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2d2(imol,jmol)*dsin(0.5d0*a2d(imol,jmol))*autoaa,&
-                      -r2d2(imol,jmol)*dcos(0.5d0*a2d(imol,jmol))*autoaa
+            write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2d2(imol,jmol)*sin(0.5d0*a2d(imol,jmol))*autoaa,&
+                      -r2d2(imol,jmol)*cos(0.5d0*a2d(imol,jmol))*autoaa
 
             close(iw3)
         end do
@@ -305,10 +350,11 @@ contains
     character(len=9) :: efile
     integer :: i, imol, jmol, fc=0
 
-    do imol=1,step2d
-!        write(*,*) imol
-        do jmol=1,step2d
+    do jmol=1,step2d
+        write(*,*) "J=", jmol
+        do imol=1,step2d
             fc=fc+1
+            write(*,*) "I=", imol
             select case(fc)
                 case(1:9)
                     write(dfile, '(a,i1)') 'H2O2D00', fc
@@ -317,7 +363,7 @@ contains
                 case(100:999)
                     write(dfile, '(a,i3)') 'H2O2D', fc
             end select
-            !write(*,*) 'Generating', cfile, dfile, efile
+            write(*,*) 'Generating', dfile
 
             open(unit=iw3, form='formatted',status='unknown',file=dfile)
 
@@ -327,6 +373,10 @@ contains
                     case(1)             !write H2 positions in cartesian
                     write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(i), xyz2d(i,1,imol,jmol)*autoaa, xyz2d(i,2,imol,jmol)*autoaa,&
                          xyz2d(i,3,imol,jmol)*autoaa
+
+                    write(*,*) (xyz2d(i,1,imol,jmol)-xyz2d(2,1,imol,jmol))*autoaa, &
+                                (xyz2d(i,2,imol,jmol)-xyz2d(2,2,imol,jmol))*autoaa,&
+                                (xyz2d(i,3,imol,jmol)-xyz2d(2,3,imol,jmol))*autoaa
                 case(2)                                                                                         !write O1 positions in cartesian
                     write(iw3,'(a2,2x,f9.6,2x,f9.6,2x,f9.6)') aname(i), xyz2d(i,1,imol,jmol)*autoaa, xyz2d(i,2,imol,jmol)*autoaa,&
                          xyz2d(i,3,imol,jmol)*autoaa

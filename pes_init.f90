@@ -71,12 +71,12 @@ contains
 
     end subroutine allocate_arrays
 
+!    subroutine allocate_2d_arrays(step2d,r2d1, r2d2, a2d)
     subroutine allocate_2d_arrays(maxatoms, step2d, xyz2d, r2d1, r2d2, a2d)
-
     ! Subroutine allocates the arrays for atom positions and dispacements.
 
     integer :: istat
-    integer(ik) :: maxatoms, step2d
+    integer(ik) :: step2d,maxatoms
     real(rk), allocatable :: xyz2d(:,:,:,:)
     real(rk), allocatable :: r2d1(:,:)
     real(rk), allocatable :: r2d2(:,:)
@@ -121,7 +121,7 @@ contains
     end subroutine deallocate_arrays    
 
     subroutine deallocate_2d_arrays(xyz2d, r2d1, r2d2, a2d)
-
+    !subroutine deallocate_2d_arrays(r2d1, r2d2, a2d)
     ! Subroutine deallocates arrays that were allocated in the allocate_arrays subroutine.
 
     integer :: istat
@@ -170,9 +170,9 @@ contains
     real(rk), allocatable, intent(in) :: xyz0(:,:)
     real(rk), intent(inout) :: r01, r02, a0
 
-    r01 = dsqrt(sum((xyz0(1,:)-xyz0(2,:))**2))
-    r02 = dsqrt(sum((xyz0(3,:)-xyz0(2,:))**2))
-    a0 = dacos(sum((xyz0(3,:)-xyz0(2,:))*(xyz0(1,:)-xyz0(2,:)))/r01/r02)
+    r01 = sqrt(sum((xyz0(1,:)-xyz0(2,:))**2))
+    r02 = sqrt(sum((xyz0(3,:)-xyz0(2,:))**2))
+    a0 = acos(sum((xyz0(3,:)-xyz0(2,:))*(xyz0(1,:)-xyz0(2,:)))/r01/r02)
 
  !   write(*,*) 'Input geo in internal coordinates'
  !   write(*,*) r01, r02, a0

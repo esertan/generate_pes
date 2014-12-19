@@ -69,14 +69,15 @@ contains
     write(*,*) 'Displaced internal coordinates'
     do m=1,step2d
         t=xmin2d+m*ssize2d
+        write(*,*) "t=", t
         do l=1,step2d
             s=xmin2d+l*ssize2d
+            write(*,*) "s=", s
 !            counter=counter+1
-            r2d1(l,m) = r01+s*drtheta(mode1,1)+t*drtheta(mode2,1)
-            r2d2(l,m) = r02+s*drtheta(mode1,2)+t*drtheta(mode2,2)
-            a2d(l,m) = a0+s*drtheta(mode1,3)+t*drtheta(mode2,3)
-!            write(*,*) drtheta(j,1), drtheta(j,2), drtheta(j,3)
-!            write(*,*) s, r1(j,l)*autoaa, r2(j,l)*autoaa, a(j,l)*180.d0/pi
+            r2d1(l,m) = r01+t*drtheta(mode1,1)+s*drtheta(mode2,1)
+            r2d2(l,m) = r02+t*drtheta(mode1,2)+s*drtheta(mode2,2)
+            a2d(l,m) = a0+t*drtheta(mode1,3)+s*drtheta(mode2,3)
+            write(*,*) 0.d0, r2d1(l,m)*sin(0.5_rk*a2d(l,m))*autoaa, -r2d1(l,m)*cos(0.5_rk*a2d(l,m))*autoaa
         end do
     end do
 !    write(*,*) counter
@@ -104,8 +105,7 @@ contains
                     xyz2d(i,k,l,m)=xyz0(i,k)+t*dxyz(mode1,i,k)+s*dxyz(mode2,i,k)
                 end do
             end do
-            write(*,*) "m=", m
-            write(*,*) "l=", l
+            write(*,*) ((xyz2d(1,k, l, m)-xyz2d(2,k, l, m))*autoaa, k=1,3)
 
         end do
     end do
