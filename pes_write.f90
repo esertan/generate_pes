@@ -327,11 +327,11 @@ contains
             open(unit=iw3,form='formatted',status='unknown',file=efile,position='append')
             write(iw3,'(i1)') maxatoms         
             write(iw3,'(i1)')
-            write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r2d1(imol,jmol)*sin(0.5d0*a2d(imol,jmol))*autoaa, &
-                   -r2d1(2,imol)*cos(0.5d0*a2d(imol,jmol))*autoaa
+            write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(1), 0.d0, r2d1(imol,jmol)*sin(0.5_rk*a2d(imol,jmol))*autoaa, &
+                   -r2d1(imol,jmol)*cos(0.5_rk*a2d(imol,jmol))*autoaa
             write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(2), 0.d0, 0.d0, 0.d0
-            write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2d2(imol,jmol)*sin(0.5d0*a2d(imol,jmol))*autoaa,&
-                      -r2d2(imol,jmol)*cos(0.5d0*a2d(imol,jmol))*autoaa
+            write(iw3,'(a1,2x,f9.6,2x,f9.6,2x,f9.6)') aname(3), 0.d0, -r2d2(imol,jmol)*sin(0.5_rk*a2d(imol,jmol))*autoaa,&
+                      -r2d2(imol,jmol)*cos(0.5_rk*a2d(imol,jmol))*autoaa
 
             close(iw3)
         end do
